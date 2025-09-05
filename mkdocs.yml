@@ -1,8 +1,8 @@
-site_name: Template de Entrega
-site_author: Sandmann, H.
-site_url: https://hsandmann.github.io/documentation.template
-repo_url: https://github.com/hsandmann/documentation.template
-repo_name: github/documentation.template
+site_name: Projeto Redes Neurais - Matheus Aguiar
+site_author: Matheus Jesus
+site_url: https://c0d8.github.io/redes-neurais/
+repo_url: https://github.com/C0D8/redes-neurais
+repo_name: github/redes-neurais
 
 theme:
   name: material
@@ -133,10 +133,10 @@ extra_javascript:
 
 nav:
   - Home: index.md
-  - This documentation: ./thisdocumentation/main.md
+  # - This documentation: ./thisdocumentation/main.md
   - Roteiros:
-    - Roteiro 1: ./roteiro1/main.md
-    - Roteiro 2: ./roteiro2/main.md
-    - Roteiro 3: ./roteiro3/main.md
-    - Roteiro 4: ./roteiro4/main.md
-  - Projeto: ./projeto/main.md
+    - Roteiro 1: ./data/main.md
+  #   - Roteiro 2: ./roteiro2/main.md
+  #   - Roteiro 3: ./roteiro3/main.md
+  #   - Roteiro 4: ./roteiro4/main.md
+  # - Projeto: ./projeto/main.md
