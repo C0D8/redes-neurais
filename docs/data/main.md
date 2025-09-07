@@ -156,6 +156,85 @@ Simple neural networks (like a Perceptron) can only learn linear boundaries. Dee
 
 ***
 
+### Answer:
+
+
+Data generation, PCA, and plot:
+
+```python
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Passo 1: Definir os parâmetros para as distribuições
+mu_A = np.array([0, 0, 0, 0, 0])
+sigma_A = np.array([
+    [1.0, 0.8, 0.1, 0.0, 0.0],
+    [0.8, 1.0, 0.3, 0.0, 0.0],
+    [0.1, 0.3, 1.0, 0.5, 0.0],
+    [0.0, 0.0, 0.5, 1.0, 0.2],
+    [0.0, 0.0, 0.0, 0.2, 1.0]
+])
+
+mu_B = np.array([1.5, 1.5, 1.5, 1.5, 1.5])
+sigma_B = np.array([
+    [1.5, -0.7, 0.2, 0.0, 0.0],
+    [-0.7, 1.5, 0.4, 0.0, 0.0],
+    [0.2, 0.4, 1.5, 0.6, 0.0],
+    [0.0, 0.0, 0.6, 1.5, 0.3],
+    [0.0, 0.0, 0.0, 0.3, 1.5]
+])
+
+# Passo 2: Gerar os dados
+num_samples = 500
+class_A = np.random.multivariate_normal(mu_A, sigma_A, num_samples)
+class_B = np.random.multivariate_normal(mu_B, sigma_B, num_samples)
+
+# Combinar os dados e rótulos
+X = np.vstack((class_A, class_B))
+y = np.hstack((np.zeros(num_samples), np.ones(num_samples)))
+
+# Passo 3: Reduzir dimensionalidade com PCA (implementação manual)
+# Centralizar os dados
+X_mean = np.mean(X, axis=0)
+X_centered = X - X_mean
+
+# Calcular a matriz de covariância
+cov_matrix = np.cov(X_centered.T)
+
+# Calcular autovalores e autovetores
+eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
+
+# Ordenar autovalores em ordem decrescente
+idx = np.argsort(eigenvalues)[::-1]
+top_eigenvectors = eigenvectors[:, idx[:2]]  # Selecionar os 2 principais autovetores
+
+# Projetar os dados para 2D
+X_2d = X_centered @ top_eigenvectors
+
+# Passo 4: Visualizar os dados em 2D
+plt.figure(figsize=(8, 6))
+plt.scatter(X_2d[:num_samples, 0], X_2d[:num_samples, 1], c='blue', label='Class A', alpha=0.6)
+plt.scatter(X_2d[num_samples:, 0], X_2d[num_samples:, 1], c='red', label='Class B', alpha=0.6)
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
+plt.title('Projeção 2D dos Dados usando PCA')
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+
+![PCA Plot](image2.png)
+
+
+
+**Analysis:**
+
+The data is not linearly separable, meaning that it is not possible to draw a hyperplane (line in 2D, plane in higher dimensions) that perfectly divides the classes without significant errors. In the 2D projection, you will see that a straight line cannot separate blue from red without cutting through many points of one class.
+
+This non-linear relationship is a challenge for simple linear models like logistic regression or a single-layer perceptron, which can only learn linear decision boundaries. These models would struggle to classify the data accurately, leading to high error rates.
+
+
 ## Exercise 3
 
 ### **Preparing Real-World Data for a Neural Network**
@@ -178,48 +257,120 @@ This exercise uses a real dataset from Kaggle. Your task is to perform the neces
 
 ***
 
-## **Evaluation Criteria**
+Answer:
 
-The deliverable for this activity consists of a **report** that includes:
+The spaceship Titanic dataset contains information about passengers on a fictional spaceship. The objective is to predict whether a passenger was transported to another dimension (the `Transported` column) based on various features such as demographics, travel details, and spending on amenities.
 
-1. A brief description of your approach to each exercise.
-1. The code used to generate the datasets, preprocess the data, and create the visualizations. With comments explaining each step.
-1. The plots and visualizations requested in each exercise.
-1. Your analysis and answers to the questions posed in each exercise.
+**Data Description:**
+There are 13 features in the dataset excluding the target variable `Transported`:
 
-**Important Notes:**
+- **Numerical Features:** `Age`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`
+- **Categorical Features:** `HomePlanet`, `CryoSleep`, `Destination`, `VIP`, `Cabin``Transported`
+- **Missing Values:** Several columns have missing values, including `Age`, `RoomService`, `FoodCourt`, `ShoppingMall`, `Spa`, `VRDeck`, `HomePlanet`, `CryoSleep`, `Destination`, and `Cabin`.
 
-- The deliverable must be submitted in the format specified: **GitHub Pages**. **No other formats will be accepted.** - there exists a template for the course that you can use to create your GitHub Pages - [template](https://hsandmann.github.io/documentation.template/){target='_blank'};
+**Data Preprocessing Steps:**
 
-- There is a **strict policy against plagiarism**. Any form of plagiarism will result in a zero grade for the activity and may lead to further disciplinary actions as per the university's academic integrity policies;
+Categorical features filled based on the most common values in the dataset. Numerical features filled with median values to mitigate the effect of outliers. Categorical features encoded using one-hot encoding. Numerical features normalized to the range [-1, 1].
 
-- **The deadline for each activity is not extended**, and it is expected that you complete them within the timeframe provided in the course schedule - **NO EXCEPTIONS** will be made for late submissions.
+note: Handled `Cabin` by splitting it into `deck`, `num`, and `side`, then filling missing values with the mode.
 
-- **AI Collaboration is allowed**, but each student **MUST UNDERSTAND** and be able to explain all parts of the code and analysis submitted. Any use of AI tools must be properly cited in your report. ^^**ORAL EXAMS**^^ may require you to explain your work in detail.
+converted `Transported` to binary (0 and 1).
 
-- All deliverables for individual activities should be submitted through the course platform [insper.blackboard.com](http://insper.blackboard.com/){:target="_blank"}.
+**Data Preprocessing:**
 
-**Grade Criteria:**
+```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
-**Exercise 1 (3 points):**
+# Step 1: Load the dataset
+# Note: Replace 'train.csv' with the path to your downloaded Kaggle dataset
+data = pd.read_csv('train.csv')
 
-| Criteria | Description |
-|:--------:|-------------|
-| **1 pt** | Data is generated correctly and visualized in a clear scatter plot with proper labels and colors. |
-| **2 pts** | The analysis of class separability is accurate, and the proposed decision boundaries are logical and well-explained in the context of what a network would learn. |
+# Step 2: Describe the dataset
+print("Dataset Description:")
+print("Objective: Predict whether a passenger was transported to an alternate dimension (Transported: True/False).")
+print("\nFeatures and their types:")
+print(data.dtypes)
+print("\nMissing Values:")
+print(data.isnull().sum())
 
-**Exercise 2 (3 points):**
+# Step 3: Preprocess the data
+# Handle missing values
+# Numerical columns: Fill with median for robustness to outliers
+numerical_cols = ['Age', 'RoomService', 'FoodCourt', 'ShoppingMall', 'Spa', 'VRDeck']
+for col in numerical_cols:
+    data[col].fillna(data[col].median(), inplace=True)
 
-| Criteria | Description |
-|:--------:|-------------|
-| **1 pt** | Data is generated correctly using the specified multivariate parameters. |
-| **1 pt** | Dimensionality reduction is applied correctly, and the resulting 2D projection is clearly plotted. |
-| **1 pt** | The analysis correctly identifies the non-linear relationship and explains why a neural network would be a suitable model. |
+# Categorical columns: Fill with mode based on predominance
+data['HomePlanet'] = data['HomePlanet'].fillna('Earth')  # 54% of data
+data['CryoSleep'] = data['CryoSleep'].fillna(False)     # 64% False
+data['Destination'] = data['Destination'].fillna('TRAPPIST-1e')  # 69% of data
+data['VIP'] = data['VIP'].fillna(False)                 # 97% False
 
-**Exercise 3 (4 points):**
+# Handle Cabin: Split into deck, num, side, and fill missing with mode
+data[['cabin_deck', 'cabin_num', 'cabin_side']] = data['Cabin'].str.split('/', expand=True)
+data['cabin_deck'] = data['cabin_deck'].fillna(data['cabin_deck'].mode()[0])
+data['cabin_num'] = data['cabin_num'].fillna(data['cabin_num'].mode()[0])
+data['cabin_side'] = data['cabin_side'].fillna(data['cabin_side'].mode()[0])
+data = data.drop(columns=['Cabin'])
 
-| Criteria | Description |
-|:--------:|-------------|
-| **1 pt** | The data is correctly loaded, and its characteristics are accurately described. |
-| **2 pts** | All preprocessing steps (handling missing data, encoding, and appropriate feature scaling for `tanh`) are implemented correctly and with clear justification for a neural network context. |
-| **1 pt** | Visualizations effectively demonstrate the impact of the data preprocessing. |
+# Drop irrelevant columns
+data = data.drop(['PassengerId', 'Name'], axis=1)
+
+# Encode categorical features
+data = pd.get_dummies(data, columns=['HomePlanet', 'Destination', 'cabin_deck', 'cabin_side'], drop_first=True)
+data['CryoSleep'] = data['CryoSleep'].astype(int)
+data['VIP'] = data['VIP'].astype(int)
+
+# Convert cabin_num to numeric, fill any remaining NaN with median
+data['cabin_num'] = pd.to_numeric(data['cabin_num'], errors='coerce')
+data['cabin_num'].fillna(data['cabin_num'].median(), inplace=True)
+
+# Convert Transported to binary
+data['Transported'] = data['Transported'].astype(int)
+
+# Normalize numerical features to [-1, 1] for tanh activation
+def custom_minmax_scaler(data, cols, feature_range=(-1, 1)):
+    data_scaled = data.copy()
+    for col in cols:
+        min_val = data[col].min()
+        max_val = data[col].max()
+        if max_val != min_val:  # Avoid division by zero
+            data_scaled[col] = (data[col] - min_val) / (max_val - min_val) * (feature_range[1] - feature_range[0]) + feature_range[0]
+        else:
+            data_scaled[col] = 0  # If all values are the same, set to 0
+    return data_scaled
+
+data_normalized = custom_minmax_scaler(data, numerical_cols + ['cabin_num'])
+
+# Step 4: Visualize numerical features before and after scaling
+data_original = pd.read_csv('train.csv')  # For comparison
+colunas_para_visualizar = numerical_cols
+
+fig, axes = plt.subplots(nrows=len(colunas_para_visualizar), ncols=2, figsize=(12, 18))
+fig.suptitle('Histograms Before and After Normalization to [-1, 1]', fontsize=16)
+
+for i, col in enumerate(colunas_para_visualizar):
+    # Before normalization
+    axes[i, 0].hist(data_original[col].dropna(), bins=30, color='skyblue', edgecolor='black')
+    axes[i, 0].set_title(f'{col} (Before Normalization)')
+    axes[i, 0].set_xlabel('Original Value')
+    axes[i, 0].set_ylabel('Frequency')
+    
+    # After normalization
+    axes[i, 1].hist(data_normalized[col], bins=30, color='salmon', edgecolor='black')
+    axes[i, 1].set_title(f'{col} (After Normalization)')
+    axes[i, 1].set_xlabel('Normalized Value [-1, 1]')
+    axes[i, 1].set_ylabel('Frequency')
+
+plt.tight_layout(rect=[0, 0, 1, 0.96])
+plt.show()
+
+# Save the preprocessed dataset
+data_normalized.to_csv('preprocessed_spaceship_titanic_improved.csv', index=False)
+print("\nPreprocessed dataset saved as 'preprocessed_spaceship_titanic_improved.csv'")
+```
+
+![Normalization Plot](image3.png)
+
