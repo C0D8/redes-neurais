@@ -9,3 +9,4 @@
 ## Matheus Aguiar
 
 - [x] Data - 
+- [x] Perceptron -
