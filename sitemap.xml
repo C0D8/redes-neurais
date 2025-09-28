@@ -2,34 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://c0d8.github.io/redes-neurais/</loc>
-         <lastmod>2025-09-15</lastmod>
+         <lastmod>2025-09-28</lastmod>
+    </url>
+    <url>
+         <loc>https://c0d8.github.io/redes-neurais/MLP/main/</loc>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://c0d8.github.io/redes-neurais/data/main/</loc>
-         <lastmod>2025-09-15</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://c0d8.github.io/redes-neurais/perceptron/main/</loc>
-         <lastmod>2025-09-15</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://c0d8.github.io/redes-neurais/roteiro1/main/</loc>
-         <lastmod>2025-09-15</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://c0d8.github.io/redes-neurais/roteiro2/main/</loc>
-         <lastmod>2025-09-15</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://c0d8.github.io/redes-neurais/roteiro3/main/</loc>
-         <lastmod>2025-09-15</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://c0d8.github.io/redes-neurais/roteiro4/main/</loc>
-         <lastmod>2025-09-15</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
     <url>
          <loc>https://c0d8.github.io/redes-neurais/thisdocumentation/main/</loc>
-         <lastmod>2025-09-15</lastmod>
+         <lastmod>2025-09-28</lastmod>
     </url>
 </urlset>
