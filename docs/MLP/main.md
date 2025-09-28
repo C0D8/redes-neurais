@@ -1,6 +1,3 @@
-Let’s dive into solving **Exercise 1** and **Exercise 2** from the provided activity, following the instructions to perform manual calculations for a Multi-Layer Perceptron (MLP) and implement a binary classification MLP from scratch. I’ll provide detailed mathematical derivations, code implementations, and explanations for each step, adhering to the submission requirements. For brevity, I’ll focus on these two exercises, as tackling all four in one response would be excessively long, but I can address Exercises 3 and 4 in a follow-up if needed.
-
----
 
 ## **Exercise 1: Manual Calculation of MLP Steps**
 
