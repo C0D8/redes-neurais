@@ -10,3 +10,4 @@
 
 - [x] Data - 
 - [x] Perceptron -
+- [x] MLP -
