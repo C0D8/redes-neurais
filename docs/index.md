@@ -11,3 +11,4 @@
 - [x] Data - 
 - [x] Perceptron -
 - [x] MLP -
+- [x] VAE -

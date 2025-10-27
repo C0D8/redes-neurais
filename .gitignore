@@ -5,3 +5,4 @@ env/
 target/
 *.csv
 .DS_Store
+env_vae/
